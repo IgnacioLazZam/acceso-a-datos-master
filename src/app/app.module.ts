@@ -9,14 +9,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { DataService } from './core/interfaces/data-service';
 import { DataInMemoryService } from './core/services/data-in-memory.service';
 import { FirebaseDataService } from './core/services/Firebase.service';
+import { DataInStorageService } from './core/services/data-in-storage.service';
 
 
 export function DataServiceFactory(backend:string){
     switch(backend){
       case 'InMemory':
         return new DataInMemoryService();
-      case 'Firebase':
-        return new FirebaseDataService();
+      case 'Storage':
+        return new DataInStorageService();
       default:
         throw new Error("Not implemented");
     }
@@ -28,12 +29,16 @@ export function DataServiceFactory(backend:string){
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
-      provide: 'backend',
+      provide: 'InMemory',
       useValue:'InMemory'
     },
     {
+      provide: 'Storage',
+      useValue:'Storage'
+    },
+    {
       provide: DataService,
-      deps: ['backend'],
+      deps: ['InMemory'],
       useFactory: DataServiceFactory,  
     },
   ],
